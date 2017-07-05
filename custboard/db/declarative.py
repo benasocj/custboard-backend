@@ -26,17 +26,17 @@ class OrderHeader(d.Model):
     order_id = d.Column('oh_order', d.Text)
 
     date_amended = d.Column('oh_amend', d.Date)
-    date_host_created = d.Column('oh_date', d.Date)
+    date_created = d.Column('oh_created', d.Date)
 
     partner = d.relationship('Partner')
 
     def __init__(self, entity, partner, order_id, date_amended=None,
-                 date_host_created=None):
+                 date_created=None):
         self.entity = entity
         self.partner = partner
         self.order_id = order_id
         self.date_amended = date_amended
-        self.date_host_created = date_host_created
+        self.date_created = date_created
 
 
 class OrderStore(d.Model):

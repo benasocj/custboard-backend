@@ -123,7 +123,7 @@ def get_today(partner_id):
         partner_id,
         [
             decl.OrderStore.sys_id.is_(None),
-            decl.OrderHeader.date_host_created == date.today(),
+            decl.OrderHeader.date_created == date.today(),
             ]
         )
 
@@ -133,6 +133,6 @@ def get_old(partner_id):
         partner_id,
         [
             decl.OrderStore.sys_id.is_(None),
-            decl.OrderHeader.date_host_created < date.today(),
+            decl.OrderHeader.date_created < date.today(),
             ]
         )

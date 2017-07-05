@@ -29,9 +29,9 @@ def test_get_data(call_and_unpack):
 
     oh1 = decl.OrderHeader('en1', pa1, 'or1', date.today())
     oh2 = decl.OrderHeader('en1', pa1, 'or2',
-                           date_host_created=date.today())
+                           date_created=date.today())
     oh3 = decl.OrderHeader('en1', pa1, 'or3',
-                           date_host_created=date(2017, 1, 1))
+                           date_created=date(2017, 1, 1))
 
     os1 = decl.OrderStore(oh1, 'sl1', 'I', 1)
     os2 = decl.OrderStore(oh1, 'sl2', 'P')

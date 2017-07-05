@@ -137,7 +137,7 @@ class TestToday:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date.today())
+                               date_created=date.today())
 
         os1 = decl.OrderStore(oh1, 'sl1', sys_id=1)
 
@@ -149,7 +149,7 @@ class TestToday:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date(2017, 1, 1))
+                               date_created=date(2017, 1, 1))
 
         os1 = decl.OrderStore(oh1, 'sl1')
 
@@ -161,7 +161,7 @@ class TestToday:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date.today())
+                               date_created=date.today())
 
         os1 = decl.OrderStore(oh1, 'sl1')
 
@@ -175,7 +175,7 @@ class TestOld:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date(2017, 1, 1))
+                               date_created=date(2017, 1, 1))
 
         os1 = decl.OrderStore(oh1, 'sl1', sys_id=1)
 
@@ -187,7 +187,7 @@ class TestOld:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date.today())
+                               date_created=date.today())
 
         os1 = decl.OrderStore(oh1, 'sl1')
 
@@ -199,7 +199,7 @@ class TestOld:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date(2017, 1, 1))
+                               date_created=date(2017, 1, 1))
 
         os1 = decl.OrderStore(oh1, 'sl1')
 
@@ -234,7 +234,7 @@ class TestConversionHistory:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date(2017, 1, 1))
+                               date_created=date(2017, 1, 1))
 
         os1 = decl.OrderStore(oh1, 'sl1', 'P')
         os2 = decl.OrderStore(oh1, 'sl2', 'P')
@@ -258,7 +258,7 @@ class TestConversionCurrent:
         pa1 = decl.Partner('pa1')
 
         oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_host_created=date(2017, 1, 1))
+                               date_created=date(2017, 1, 1))
 
         os1 = decl.OrderStore(oh1, 'sl1', 'P')
         os2 = decl.OrderStore(oh1, 'sl2', 'P')

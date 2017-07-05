@@ -10,7 +10,7 @@ Design
 * In "Old", "Today", "Total", "Released", and "Packed" the top number is always
   the number of ``order_str`` orders, and the bottom number are units.
 * To find out whether an order belongs to "Old" (<=yesterday) or "Today"
-  (=today) check the ``order_str.oh_date`` field.
+  (=today) check the ``order_hdr.oh_created`` field.
 * Conversion is the amount of ``order_str`` orders which changed to
   ``order_str.os_status = P`` within the last 15 min. Chart is also drawn based
   on that (every 15 min the current "Conversion" is drawn).
