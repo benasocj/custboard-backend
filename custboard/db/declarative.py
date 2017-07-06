@@ -25,16 +25,18 @@ class OrderHeader(d.Model):
     partner_id = d.Column('pa_partner', d.Text)
     order_id = d.Column('oh_order', d.Text)
 
+    status = d.Column('oh_status', d.Text)
     date_amended = d.Column('oh_amend', d.Date)
     date_created = d.Column('oh_created', d.Date)
 
     partner = d.relationship('Partner')
 
-    def __init__(self, entity, partner, order_id, date_amended=None,
-                 date_created=None):
+    def __init__(self, entity, partner, order_id, status=None,
+                 date_amended=None, date_created=None):
         self.entity = entity
         self.partner = partner
         self.order_id = order_id
+        self.status = status
         self.date_amended = date_amended
         self.date_created = date_created
 

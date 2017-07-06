@@ -17,6 +17,7 @@ class Data(Resource):
         interval = int(request.args.get('interval', str(60 * 15)))
         return {
             'released': interface.get_released(partner_id),
+            'unreleased': interface.get_unreleased(partner_id),
             'packed': interface.get_packed(partner_id),
             'openToday': interface.get_today(partner_id),
             'openOld': interface.get_old(partner_id),

@@ -101,9 +101,20 @@ def get_released(partner_id):
     return _get_pieces_per_order(
         partner_id,
         [
-            decl.OrderStore.status.notin_(['P', 'T']),
+            decl.OrderHeader.status.notin_(['P', 'T']),
+            decl.OrderStore.status != 'T',
             decl.OrderStore.sys_id.isnot(None),
-            decl.OrderHeader.date_amended == date.today(),
+            ]
+        )
+
+
+def get_unreleased(partner_id):
+    return _get_pieces_per_order(
+        partner_id,
+        [
+            decl.OrderHeader.status == '',
+            decl.OrderStore.status == '',
+            decl.OrderStore.sys_id.is_(None),
             ]
         )
 
@@ -112,8 +123,8 @@ def get_packed(partner_id):
     return _get_pieces_per_order(
         partner_id,
         [
+            decl.OrderHeader.status.in_(['', 'P']),
             decl.OrderStore.status == 'P',
-            decl.OrderHeader.date_amended == date.today(),
             ]
         )
 
@@ -122,8 +133,9 @@ def get_today(partner_id):
     return _get_pieces_per_order(
         partner_id,
         [
-            decl.OrderStore.sys_id.is_(None),
             decl.OrderHeader.date_created == date.today(),
+            decl.OrderHeader.status == '',
+            decl.OrderStore.status != 'T',
             ]
         )
 
@@ -132,7 +144,8 @@ def get_old(partner_id):
     return _get_pieces_per_order(
         partner_id,
         [
-            decl.OrderStore.sys_id.is_(None),
             decl.OrderHeader.date_created < date.today(),
+            decl.OrderHeader.status == '',
+            decl.OrderStore.status != 'T',
             ]
         )

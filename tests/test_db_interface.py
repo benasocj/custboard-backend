@@ -44,36 +44,37 @@ class TestGetPiecesPerOrder:
 
 
 class TestReleased:
-    def test_wrong_status(self):
+    def test_wrong_oh_status(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1', date.today())
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'P')
+        oh2 = decl.OrderHeader('en1', pa1, 'or2', 'T')
 
-        os1 = decl.OrderStore(oh1, 'sl1', 'P', 1)
-        os2 = decl.OrderStore(oh1, 'sl2', 'T', 1)
+        os1 = decl.OrderStore(oh1, 'sl1', 'I', 1)
+        os2 = decl.OrderStore(oh2, 'sl1', 'I', 1)
 
         d.session.add(decl.OrderLine(os1, 1, 1))
         d.session.add(decl.OrderLine(os2, 1, 1))
 
         assert interface.get_released('pa1')['orders'] == 0
 
-    def test_empty_sys_id(self):
+    def test_wrong_os_status(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1', date.today())
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'I')
 
-        os1 = decl.OrderStore(oh1, 'sl1', 'I')
+        os1 = decl.OrderStore(oh1, 'sl1', 'T', 1)
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
         assert interface.get_released('pa1')['orders'] == 0
 
-    def test_wrong_date(self):
+    def test_empty_sys_id(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1', date(2017, 1, 1))
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'I')
 
-        os1 = decl.OrderStore(oh1, 'sl1', 'I', 1)
+        os1 = decl.OrderStore(oh1, 'sl1', 'I')
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
@@ -82,10 +83,10 @@ class TestReleased:
     def test_ok(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1', date.today())
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'I')
 
-        os1 = decl.OrderStore(oh1, 'sl1', '', 1)
-        os2 = decl.OrderStore(oh1, 'sl2', 'I', 1)
+        os1 = decl.OrderStore(oh1, 'sl1', 'I', 1)
+        os2 = decl.OrderStore(oh1, 'sl2', 'P', 1)
 
         d.session.add(decl.OrderLine(os1, 1, 1))
         d.session.add(decl.OrderLine(os2, 1, 1))
@@ -93,11 +94,81 @@ class TestReleased:
         assert interface.get_released('pa1')['orders'] == 2
 
 
-class TestPacked:
-    def test_wrong_status(self):
+class TestUnreleased:
+    def test_wrong_oh_status(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1', date.today())
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'I')
+        oh2 = decl.OrderHeader('en1', pa1, 'or2', 'P')
+        oh3 = decl.OrderHeader('en1', pa1, 'or3', 'T')
+
+        os1 = decl.OrderStore(oh1, 'sl1', '')
+        os2 = decl.OrderStore(oh2, 'sl1', '')
+        os3 = decl.OrderStore(oh3, 'sl1', '')
+
+        d.session.add(decl.OrderLine(os1, 1, 1))
+        d.session.add(decl.OrderLine(os2, 1, 1))
+        d.session.add(decl.OrderLine(os3, 1, 1))
+
+        assert interface.get_unreleased('pa1')['orders'] == 0
+
+    def test_wrong_os_status(self):
+        pa1 = decl.Partner('pa1')
+
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '')
+
+        os1 = decl.OrderStore(oh1, 'sl1', 'I')
+        os2 = decl.OrderStore(oh1, 'sl2', 'P')
+        os3 = decl.OrderStore(oh1, 'sl3', 'T')
+
+        d.session.add(decl.OrderLine(os1, 1, 1))
+        d.session.add(decl.OrderLine(os2, 1, 1))
+        d.session.add(decl.OrderLine(os3, 1, 1))
+
+        assert interface.get_unreleased('pa1')['orders'] == 0
+
+    def test_non_empty_sys_id(self):
+        pa1 = decl.Partner('pa1')
+
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '')
+
+        os1 = decl.OrderStore(oh1, 'sl1', '', 1)
+
+        d.session.add(decl.OrderLine(os1, 1, 1))
+
+        assert interface.get_unreleased('pa1')['orders'] == 0
+
+    def test_ok(self):
+        pa1 = decl.Partner('pa1')
+
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '')
+
+        os1 = decl.OrderStore(oh1, 'sl1', '')
+
+        d.session.add(decl.OrderLine(os1, 1, 1))
+
+        assert interface.get_unreleased('pa1')['orders'] == 1
+
+
+class TestPacked:
+    def test_wrong_oh_status(self):
+        pa1 = decl.Partner('pa1')
+
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'I')
+        oh2 = decl.OrderHeader('en1', pa1, 'or2', 'T')
+
+        os1 = decl.OrderStore(oh1, 'sl1', 'P')
+        os2 = decl.OrderStore(oh2, 'sl1', 'P')
+
+        d.session.add(decl.OrderLine(os1, 1, 1))
+        d.session.add(decl.OrderLine(os2, 1, 1))
+
+        assert interface.get_packed('pa1')['orders'] == 0
+
+    def test_wrong_os_status(self):
+        pa1 = decl.Partner('pa1')
+
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '')
 
         os1 = decl.OrderStore(oh1, 'sl1', '')
         os2 = decl.OrderStore(oh1, 'sl2', 'I')
@@ -109,21 +180,10 @@ class TestPacked:
 
         assert interface.get_packed('pa1')['orders'] == 0
 
-    def test_wrong_date(self):
-        pa1 = decl.Partner('pa1')
-
-        oh1 = decl.OrderHeader('en1', pa1, 'or1', date(2017, 1, 1))
-
-        os1 = decl.OrderStore(oh1, 'sl1', 'P')
-
-        d.session.add(decl.OrderLine(os1, 1, 1))
-
-        assert interface.get_packed('pa1')['orders'] == 0
-
     def test_ok(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1', date.today())
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '')
 
         os1 = decl.OrderStore(oh1, 'sl1', 'P')
 
@@ -133,25 +193,45 @@ class TestPacked:
 
 
 class TestToday:
-    def test_non_empty_sys_id(self):
+    def test_wrong_date(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_created=date.today())
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '',
+                               date_created=date(2017, 1, 1))
 
-        os1 = decl.OrderStore(oh1, 'sl1', sys_id=1)
+        os1 = decl.OrderStore(oh1, 'sl1', '')
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
         assert interface.get_today('pa1')['orders'] == 0
 
-    def test_wrong_date(self):
+    def test_wrong_oh_status(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_created=date(2017, 1, 1))
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'I',
+                               date_created=date.today())
+        oh2 = decl.OrderHeader('en1', pa1, 'or2', 'P',
+                               date_created=date.today())
+        oh3 = decl.OrderHeader('en1', pa1, 'or3', 'T',
+                               date_created=date.today())
 
-        os1 = decl.OrderStore(oh1, 'sl1')
+        os1 = decl.OrderStore(oh1, 'sl1', '')
+        os2 = decl.OrderStore(oh2, 'sl1', '')
+        os3 = decl.OrderStore(oh3, 'sl1', '')
+
+        d.session.add(decl.OrderLine(os1, 1, 1))
+        d.session.add(decl.OrderLine(os2, 1, 1))
+        d.session.add(decl.OrderLine(os3, 1, 1))
+
+        assert interface.get_today('pa1')['orders'] == 0
+
+    def test_wrong_os_status(self):
+        pa1 = decl.Partner('pa1')
+
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '',
+                               date_created=date.today())
+
+        os1 = decl.OrderStore(oh1, 'sl1', 'T')
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
@@ -160,10 +240,10 @@ class TestToday:
     def test_ok(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1',
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '',
                                date_created=date.today())
 
-        os1 = decl.OrderStore(oh1, 'sl1')
+        os1 = decl.OrderStore(oh1, 'sl1', '')
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
@@ -171,25 +251,45 @@ class TestToday:
 
 
 class TestOld:
-    def test_non_empty_sys_id(self):
+    def test_wrong_date(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_created=date(2017, 1, 1))
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '',
+                               date_created=date.today())
 
-        os1 = decl.OrderStore(oh1, 'sl1', sys_id=1)
+        os1 = decl.OrderStore(oh1, 'sl1', '')
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
         assert interface.get_old('pa1')['orders'] == 0
 
-    def test_wrong_date(self):
+    def test_wrong_oh_status(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1',
-                               date_created=date.today())
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', 'I',
+                               date_created=date(2017, 1, 1))
+        oh2 = decl.OrderHeader('en1', pa1, 'or2', 'P',
+                               date_created=date(2017, 1, 1))
+        oh3 = decl.OrderHeader('en1', pa1, 'or3', 'T',
+                               date_created=date(2017, 1, 1))
 
-        os1 = decl.OrderStore(oh1, 'sl1')
+        os1 = decl.OrderStore(oh1, 'sl1', '')
+        os2 = decl.OrderStore(oh2, 'sl1', '')
+        os3 = decl.OrderStore(oh3, 'sl1', '')
+
+        d.session.add(decl.OrderLine(os1, 1, 1))
+        d.session.add(decl.OrderLine(os2, 1, 1))
+        d.session.add(decl.OrderLine(os3, 1, 1))
+
+        assert interface.get_old('pa1')['orders'] == 0
+
+    def test_wrong_os_status(self):
+        pa1 = decl.Partner('pa1')
+
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '',
+                               date_created=date(2017, 1, 1))
+
+        os1 = decl.OrderStore(oh1, 'sl1', 'T')
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
@@ -198,10 +298,10 @@ class TestOld:
     def test_ok(self):
         pa1 = decl.Partner('pa1')
 
-        oh1 = decl.OrderHeader('en1', pa1, 'or1',
+        oh1 = decl.OrderHeader('en1', pa1, 'or1', '',
                                date_created=date(2017, 1, 1))
 
-        os1 = decl.OrderStore(oh1, 'sl1')
+        os1 = decl.OrderStore(oh1, 'sl1', '')
 
         d.session.add(decl.OrderLine(os1, 1, 1))
 
