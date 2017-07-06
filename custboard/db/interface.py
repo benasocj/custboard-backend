@@ -58,12 +58,28 @@ def get_conversion_history(partner_id, seconds_group):
                 + d.text(str(1))) * d.text(str(seconds_group)))
                 .label('interval'),
             d.func.count(sub.c.time_closed).label('orders_cnt'))
-        .group_by('interval'))
+        .group_by('interval')
+        .order_by('interval'))
 
     r = {}
-    for i in query:
-        key = (_get_midnight() + timedelta(seconds=i.interval)).isoformat()
-        r[key] = i.orders_cnt
+    next_exp_window = -1
+
+    def add_entry(window, v):
+        key = (_get_midnight() + timedelta(seconds=window)).isoformat()
+        r[key] = v
+
+    for idx, i in enumerate(query):
+        if idx == 0:
+            next_exp_window = i.interval
+        # Fill time window gaps. E.g. if DB only returns values for 7:00,
+        # 7:30, 7:45 for a 15 min interval, this will fill the 7:15 window
+        # with a value of 0.
+        while i.interval != next_exp_window:
+            add_entry(next_exp_window, 0)
+            next_exp_window += seconds_group
+        add_entry(i.interval, i.orders_cnt)
+        next_exp_window += seconds_group
+
     return r
 
 

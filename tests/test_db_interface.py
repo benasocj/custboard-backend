@@ -340,16 +340,21 @@ class TestConversionHistory:
         os2 = decl.OrderStore(oh1, 'sl2', 'P')
         os3 = decl.OrderStore(oh1, 'sl3', 'P')
         os4 = decl.OrderStore(oh1, 'sl4', 'P')
+        os5 = decl.OrderStore(oh1, 'sl5', 'P')
 
         today = date.today()
         d.session.add(decl.OrderSSCC(os1, 'ss1', today, 3600 * 7))
         d.session.add(decl.OrderSSCC(os2, 'ss1', today, 3600 * 7 + 60))
         d.session.add(decl.OrderSSCC(os3, 'ss1', today, 3600 * 7 + 120))
         d.session.add(decl.OrderSSCC(os4, 'ss1', today, 3600 * 7 + 180))
+        d.session.add(decl.OrderSSCC(os5, 'ss1', today, 3600 * 7 + 180 * 4))
 
         assert interface.get_conversion_history('pa1', 60 * 3) == {
             '{}T07:03:00'.format(today.isoformat()): 3,
             '{}T07:06:00'.format(today.isoformat()): 1,
+            '{}T07:09:00'.format(today.isoformat()): 0,
+            '{}T07:12:00'.format(today.isoformat()): 0,
+            '{}T07:15:00'.format(today.isoformat()): 1,
             }
 
 
